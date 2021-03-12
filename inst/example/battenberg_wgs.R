@@ -6,6 +6,7 @@ option_list = list(
   make_option(c("-n", "--normalname"), type="character", default=NULL, help="Samplename of the normal", metavar="character"),
   make_option(c("--tb"), type="character", default=NULL, help="Tumour BAM file", metavar="character"),
   make_option(c("--nb"), type="character", default=NULL, help="Normal BAM file", metavar="character"),
+  make_option(c("--ref"), type="character", default=NULL, help="Common path to directory containing all reference materials", metavar="character"),
   make_option(c("--sex"), type="character", default=NULL, help="Sex of the sample", metavar="character"),
   make_option(c("-o", "--output"), type="character", default=NULL, help="Directory where output will be written", metavar="character"),
   make_option(c("--skip_allelecount"), type="logical", default=FALSE, action="store_true", help="Provide when alleles don't have to be counted. This expects allelecount files on disk", metavar="character"),
@@ -22,6 +23,7 @@ TUMOURNAME = opt$tumourname
 NORMALNAME = opt$normalname
 NORMALBAM = opt$nb
 TUMOURBAM = opt$tb
+REFDIR = opt$ref
 IS.MALE = opt$sex=="male" | opt$sex=="Male"
 RUN_DIR = opt$output
 SKIP_ALLELECOUNTING = opt$skip_allelecount
@@ -31,17 +33,17 @@ NTHREADS = opt$cpu
 PRIOR_BREAKPOINTS_FILE = opt$bp
 
 ###############################################################################
-# 2018-11-01
+# 2018-11-01	Updated 03.10.21 by Kami E. Chiotti
 # A pure R Battenberg v2.2.9 WGS pipeline implementation.
 # sd11 [at] sanger.ac.uk
 ###############################################################################
 
 # General static
-IMPUTEINFOFILE = "/lustre/scratch117/casm/team219/sd11/reference/GenomeFiles/battenberg_impute_v3/impute_info.txt"
-G1000PREFIX = "/lustre/scratch117/casm/team219/sd11/reference/GenomeFiles/battenberg_1000genomesloci2012_v3/1000genomesAlleles2012_chr"
-G1000PREFIX_AC = "/lustre/scratch117/casm/team219/sd11/reference/GenomeFiles/battenberg_1000genomesloci2012_v3/1000genomesloci2012_chr"
-GCCORRECTPREFIX = "/lustre/scratch117/casm/team219/sd11/reference/GenomeFiles/battenberg_wgs_gc_correction_1000g_v3_noNA/1000_genomes_GC_corr_chr_"
-REPLICCORRECTPREFIX = "/lustre/scratch117/casm/team219/sd11/reference/GenomeFiles/battenberg_wgs_replic_correction_1000g_v3/1000_genomes_replication_timing_chr_"
+IMPUTEINFOFILE = paste0(REFDIR,"/impute_info.txt")
+G1000PREFIX = paste0(REFDIR,"/1000G_loci_hg38/1kg.phase3.v5a_GRCh38nounref_allele_index_chr")
+G1000PREFIX_AC = paste0(REFDIR,"1000G_loci_hg38/1kg.phase3.v5a_GRCh38nounref_loci_chr")
+GCCORRECTPREFIX = paste0(REFDIR,"GC_correction_hg38/1000G_GC_chr")
+REPLICCORRECTPREFIX = paste0(REFDIR,"RT_correction_hg38/1000G_RT_chr")
 IMPUTE_EXE = "impute2"
 
 PLATFORM_GAMMA = 1
@@ -63,7 +65,7 @@ CALC_SEG_BAF_OPTION = 3
 
 # WGS specific static
 ALLELECOUNTER = "alleleCounter"
-PROBLEMLOCI = "/lustre/scratch117/casm/team219/sd11/reference/GenomeFiles/battenberg_probloci/probloci_270415.txt.gz"
+PROBLEMLOCI = paste0(REFDIR,"probloci/probloci.txt.gz")
 
 # Change to work directory and load the chromosome information
 setwd(RUN_DIR)
